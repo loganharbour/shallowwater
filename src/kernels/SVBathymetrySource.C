@@ -6,9 +6,11 @@ InputParameters
 validParams<SVBathymetrySource>()
 {
   InputParameters params = validParams<Kernel>();
-  params.addClassDescription("Computes residual contribution for "
+  params.addClassDescription("Computes residual and Jacobian contribution for "
+                             "the bathymetry source terms "
                              "$gh\\frac{\\partial b}{\\partial x}$ or "
-                             "$gh\\frac{\\partial b}{\\partial y}$.");
+                             "$gh\\frac{\\partial b}{\\partial y}$ in the "
+                             "Saint-Venant equations.");
 
   params.addRequiredCoupledVar("h", "The water height variable.");
   params.addRequiredParam<FunctionName>("b_func",
@@ -23,16 +25,29 @@ validParams<SVBathymetrySource>()
 SVBathymetrySource::SVBathymetrySource(const InputParameters & parameters)
   : Kernel(parameters),
     _h(coupledValue("h")),
+    _h_ivar(coupled("h")),
     _b(getFunction("b_func")),
-    _component(getParam<unsigned int>("component")),
-    _g(getParam<Real>("gravity"))
+    _comp(getParam<unsigned int>("component")),
+    _g(getParam<Real>("g"))
 {
-  if (_component > 1)
-    mooseError("Component in SVBathymetrySource can only take values 0 or 1");
+  // Sanity check on component
+  if (_comp > 1)
+    mooseError("component in SVBathymetrySource can only take values 0 or 1");
 }
 
 Real
 SVBathymetrySource::computeQpResidual()
 {
-  return _g * _h[_qp] * _b.gradient(_t, _q_point[_qp])(_component);
+  return _g * _h[_qp] * _b.gradient(_t, _q_point[_qp])(_comp);
+}
+
+Real
+SVBathymetrySource::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  // With respect to h
+  if (jvar == _h_ivar)
+    return _phi[_j][_qp] * _g * _b.gradient(_t, _q_point[_qp])(_comp) * _test[_i][_qp];
+  // With repsect to q_x or q_y
+  else
+    return 0;
 }
