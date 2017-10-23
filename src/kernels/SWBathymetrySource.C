@@ -7,8 +7,8 @@ validParams<SWBathymetrySource>()
 {
   InputParameters params = validParams<Kernel>();
   params.addClassDescription("Computes residual contribution for "
-                             "$(gh\\frac{\\partial b}{\\partial x}$ or "
-                             "$(gh\\frac{\\partial b}{\\partial y}$.");
+                             "$gh\\frac{\\partial b}{\\partial x}$ or "
+                             "$gh\\frac{\\partial b}{\\partial y}$.");
 
   params.addRequiredCoupledVar("h", "The water height variable.");
   params.addRequiredParam<FunctionName>("b_func",
