@@ -4,6 +4,9 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
+// Shallow water kernels
+#include "SWBathymetrySource.h"
+
 template <>
 InputParameters
 validParams<shallowwaterApp>()
@@ -49,8 +52,9 @@ shallowwaterApp__registerObjects(Factory & factory)
   shallowwaterApp::registerObjects(factory);
 }
 void
-shallowwaterApp::registerObjects(Factory & /*factory*/)
+shallowwaterApp::registerObjects(Factory & factory)
 {
+  registerKernel(SWBathymetrySource);
 }
 
 void
