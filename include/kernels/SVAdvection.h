@@ -18,19 +18,19 @@ public:
 protected:
   virtual Real computeQpResidual() override;
   virtual Real computeQpJacobian() override;
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar) override;
 
   /// Coupled water height variable
   const VariableValue & _h;
 
-  /// Other momentum component variable (used in 2D)
-  const VariableValue & _qo;
+  /// Coupled momentum variables
+  const VariableValue & _q_x, _q_y;
 
-  /// Component indices
-  const unsigned int _comp_u;
-  const unsigned int _comp_qo;
+  /// Component index
+  const unsigned int _comp;
 
-  /// Whether or not to use the other momentum component
-  bool _use_qo;
+  /// h equation index
+  const unsigned int _h_ivar;
 };
 
 #endif
