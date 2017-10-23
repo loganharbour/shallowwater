@@ -22,7 +22,7 @@ protected:
   /// Coupled water height variable
   const VariableValue & _h;
 
-  /// Couple water height variable index
+  /// h equation index
   const unsigned int _h_ivar;
 
   /// Bathymetry function
