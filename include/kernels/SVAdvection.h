@@ -23,14 +23,14 @@ protected:
   /// Coupled water height variable
   const VariableValue & _h;
 
+  /// h equation index
+  const unsigned int _h_ivar;
+
   /// Coupled momentum variables
   const VariableValue & _q_x, _q_y;
 
   /// Component index
   const unsigned int _comp;
-
-  /// h equation index
-  const unsigned int _h_ivar;
 };
 
 #endif
