@@ -1,9 +1,9 @@
-#include "SWBathymetrySource.h"
+#include "SVBathymetrySource.h"
 #include "Function.h"
 
 template <>
 InputParameters
-validParams<SWBathymetrySource>()
+validParams<SVBathymetrySource>()
 {
   InputParameters params = validParams<Kernel>();
   params.addClassDescription("Computes residual contribution for "
@@ -20,7 +20,7 @@ validParams<SWBathymetrySource>()
   return params;
 }
 
-SWBathymetrySource::SWBathymetrySource(const InputParameters & parameters)
+SVBathymetrySource::SVBathymetrySource(const InputParameters & parameters)
   : Kernel(parameters),
     _h(coupledValue("h")),
     _b(getFunction("b_func")),
@@ -28,11 +28,11 @@ SWBathymetrySource::SWBathymetrySource(const InputParameters & parameters)
     _g(getParam<Real>("gravity"))
 {
   if (_component > 1)
-    mooseError("Component in SWBathymetrySource can only take values 0 or 1");
+    mooseError("Component in SVBathymetrySource can only take values 0 or 1");
 }
 
 Real
-SWBathymetrySource::computeQpResidual()
+SVBathymetrySource::computeQpResidual()
 {
   return _g * _h[_qp] * _b.gradient(_t, _q_point[_qp])(_component);
 }
