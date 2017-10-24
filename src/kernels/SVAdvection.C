@@ -39,10 +39,10 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
 
   // y-component of momentum is required but not given
   if (_mesh.dimension() == 2 && !isParamValid("q_y"))
-      mooseError("SVAdvection requires the y-component of momentum, q_y in 2D");
+    mooseError("SVAdvection requires the y-component of momentum, q_y in 2D");
   // y-component of momentum is given but is not required
   else if (isParamValid("q_y"))
-      mooseError("SVAdvection does not require the y-component of momentum, q_y"
+    mooseError("SVAdvection does not require the y-component of momentum, q_y"
                  " in 1D but it was provided");
 }
 
