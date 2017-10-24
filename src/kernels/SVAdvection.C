@@ -29,8 +29,10 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
     _q_y(isParamValid("q_y") ? coupledValue("q_y") : _zero),
-    _comp(getParam<unsigned int>("component")),
-    _h_ivar(coupled("h"))
+    _h_ivar(coupled("h")),
+    _q_x_ivar(coupled("q_x")),
+    _q_y_ivar(isParamValid("q_y") ? coupled("q_y") : 0),
+    _comp(getParam<unsigned int>("component"))
 {
   // Sanity check on component
   if (_comp > 1)
@@ -77,6 +79,12 @@ SVAdvection::computeQpOffDiagJacobian(unsigned int jvar)
   // With respect to h
   if (jvar == _h_ivar)
     return -_phi[_j][_qp] * _u[_qp] / _h[_qp] * (v * _grad_test[_i][_qp]);
+  // With respect to x-momentum component (q_y equation)
+  else if (jvar == _q_x_ivar)
+    return -_phi[_j][_qp] * (_grad_test[_i][_qp](_q_x_ivar) * _u[_qp] / _h[_qp]);
+  // With respect to y-momentum component (q_x equation)
+  else if (jvar == _q_y_ivar)
+    return -_phi[_j][_qp] * (_grad_test[_i][_qp](_q_y_ivar) * _u[_qp] / _h[_qp]);
   else
     return 0;
 }
