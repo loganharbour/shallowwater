@@ -27,10 +27,10 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
   : Kernel(parameters),
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
-    _q_y(isParamValid("q_y") ? coupledValue("q_y") : _zero),
+    _q_y(coupledValue("q_y")),
     _h_ivar(coupled("h")),
     _q_x_ivar(coupled("q_x")),
-    _q_y_ivar(isParamValid("q_y") ? coupled("q_y") : 0),
+    _q_y_ivar(coupled("q_y")),
     _comp(getParam<unsigned int>("component"))
 {
   // Sanity check on component
@@ -38,10 +38,10 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
     mooseError("component in SVAdvection can only take values 0 or 1");
 
   // y-component of momentum is required but not given
-  if (_mesh.dimension() == 2 && !isParamValid("q_y"))
+  if (_mesh.dimension() == 2 && !isCoupled("q_y"))
     mooseError("SVAdvection requires the y-component of momentum, q_y in 2D");
   // y-component of momentum is given but is not required
-  else if (isParamValid("q_y"))
+  else if (isCoupled("q_y"))
     mooseError("SVAdvection does not require the y-component of momentum, q_y"
                " in 1D but it was provided");
 }

@@ -22,15 +22,15 @@ validParams<SVContinuity>()
 SVContinuity::SVContinuity(const InputParameters & parameters)
   : Kernel(parameters),
     _q_x(coupledValue("q_x")),
-    _q_y(isParamValid("q_y") ? coupledValue("q_y") : _zero),
+    _q_y(coupledValue("q_y")),
     _q_x_ivar(coupled("q_x")),
-    _q_y_ivar(isParamValid("q_y") ? coupled("q_y") : 0)
+    _q_y_ivar(coupled("q_y"))
 {
   // y-component of momentum is required but not given
-  if (_mesh.dimension() == 2 && !isParamValid("q_y"))
+  if (_mesh.dimension() == 2 && !isCoupled("q_y"))
     mooseError("SVContinuity requires the y-component of momentum, q_y in 2D");
   // y-component of momentum is given but is not required
-  else if (isParamValid("q_y"))
+  else if (isCoupled("q_y"))
     mooseError("SVContinuity does not require the y-component of momentum, q_y"
                " in 1D but it was provided");
 }
@@ -49,10 +49,10 @@ SVContinuity::computeQpOffDiagJacobian(unsigned int jvar)
 {
   // With respect to x-momentum component
   if (jvar == _q_x_ivar)
-    return _phi[_j][_qp] * _grad_test[_i][_qp](0);
+    return -_phi[_j][_qp] * _grad_test[_i][_qp](0);
   // With respect to y-momentum component
   else if (jvar == _q_y_ivar)
-    return _phi[_j][_qp] * _grad_test[_i][_qp](1);
+    return -_phi[_j][_qp] * _grad_test[_i][_qp](1);
   else
     return 0;
 }
