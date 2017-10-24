@@ -2,7 +2,6 @@
 
 // MOOSE includes
 #include "MooseMesh.h"
-#include "Function.h"
 
 template <>
 InputParameters

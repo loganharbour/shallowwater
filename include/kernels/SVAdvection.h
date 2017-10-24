@@ -5,7 +5,6 @@
 
 // Forward Declarations
 class SVAdvection;
-class Function;
 
 template <>
 InputParameters validParams<SVAdvection>();
