@@ -7,7 +7,7 @@ validParams<SVBathymetry>()
 {
   InputParameters params = validParams<Kernel>();
   params.addClassDescription("Computes residual and Jacobian contribution for "
-                             "the bathymetry source terms "
+                             "the bathymetry terms "
                              "$gh\\frac{\\partial b}{\\partial x}$ or "
                              "$gh\\frac{\\partial b}{\\partial y}$ in the "
                              "Saint-Venant equations.");

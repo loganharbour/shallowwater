@@ -10,7 +10,7 @@ validParams<SVAdvection>()
   InputParameters params = validParams<Kernel>();
   params.addClassDescription("Computes residual and Jacobian contribution for "
                              "the off diagonal advection term: "
-                             "$\\frac{q_x q_y}{h}$ or $\\frac{q_x q_y}{h}");
+                             "$\\frac{\\vec{q}}{h}$ in the Saint-Venant equations.");
 
   params.addRequiredCoupledVar("h", "The water height variable.");
   params.addRequiredCoupledVar("q_x", "The variable that expresses the x-component"
