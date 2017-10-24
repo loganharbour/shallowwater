@@ -43,7 +43,7 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
   // y-component of momentum is given but is not required
   else if (isParamValid("q_y"))
     mooseError("SVAdvection does not require the y-component of momentum, q_y"
-                 " in 1D but it was provided");
+               " in 1D but it was provided");
 }
 
 Real
