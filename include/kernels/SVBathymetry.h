@@ -1,19 +1,19 @@
-#ifndef SVBATHYMETRYSOURCE_H
-#define SVBATHYMETRYSOURCE_H
+#ifndef SVBATHYMETRY_H
+#define SVBATHYMETRY_H
 
 #include "Kernel.h"
 
 // Forward Declarations
-class SVBathymetrySource;
+class SVBathymetry;
 class Function;
 
 template <>
-InputParameters validParams<SVBathymetrySource>();
+InputParameters validParams<SVBathymetry>();
 
-class SVBathymetrySource : public Kernel
+class SVBathymetry : public Kernel
 {
 public:
-  SVBathymetrySource(const InputParameters & parameters);
+  SVBathymetry(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual() override;

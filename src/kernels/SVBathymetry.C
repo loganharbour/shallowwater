@@ -1,9 +1,9 @@
-#include "SVBathymetrySource.h"
+#include "SVBathymetry.h"
 #include "Function.h"
 
 template <>
 InputParameters
-validParams<SVBathymetrySource>()
+validParams<SVBathymetry>()
 {
   InputParameters params = validParams<Kernel>();
   params.addClassDescription("Computes residual and Jacobian contribution for "
@@ -22,7 +22,7 @@ validParams<SVBathymetrySource>()
   return params;
 }
 
-SVBathymetrySource::SVBathymetrySource(const InputParameters & parameters)
+SVBathymetry::SVBathymetry(const InputParameters & parameters)
   : Kernel(parameters),
     _h(coupledValue("h")),
     _h_ivar(coupled("h")),
@@ -32,17 +32,17 @@ SVBathymetrySource::SVBathymetrySource(const InputParameters & parameters)
 {
   // Sanity check on component
   if (_comp > 1)
-    mooseError("component in SVBathymetrySource can only take values 0 or 1");
+    mooseError("component in SVBathymetry can only take values 0 or 1");
 }
 
 Real
-SVBathymetrySource::computeQpResidual()
+SVBathymetry::computeQpResidual()
 {
   return _g * _h[_qp] * _b.gradient(_t, _q_point[_qp])(_comp);
 }
 
 Real
-SVBathymetrySource::computeQpOffDiagJacobian(unsigned int jvar)
+SVBathymetry::computeQpOffDiagJacobian(unsigned int jvar)
 {
   // With respect to h
   if (jvar == _h_ivar)

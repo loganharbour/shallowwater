@@ -6,7 +6,7 @@
 
 // Shallow water kernels
 #include "SVAdvection.h"
-#include "SVBathymetrySource.h"
+#include "SVBathymetry.h"
 
 template <>
 InputParameters
@@ -56,7 +56,7 @@ void
 shallowwaterApp::registerObjects(Factory & factory)
 {
   registerKernel(SVAdvection);
-  registerKernel(SVBathymetrySource);
+  registerKernel(SVBathymetry);
 }
 
 void
