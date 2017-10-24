@@ -80,10 +80,10 @@ SVAdvection::computeQpOffDiagJacobian(unsigned int jvar)
     return -_phi[_j][_qp] * _u[_qp] / _h[_qp] * (v * _grad_test[_i][_qp]);
   // With respect to x-momentum component (q_y equation)
   else if (jvar == _q_x_ivar)
-    return -_phi[_j][_qp] * (_grad_test[_i][_qp](_q_x_ivar) * _u[_qp] / _h[_qp]);
+    return -_phi[_j][_qp] * (_grad_test[_i][_qp](0) * _u[_qp] / _h[_qp]);
   // With respect to y-momentum component (q_x equation)
   else if (jvar == _q_y_ivar)
-    return -_phi[_j][_qp] * (_grad_test[_i][_qp](_q_y_ivar) * _u[_qp] / _h[_qp]);
+    return -_phi[_j][_qp] * (_grad_test[_i][_qp](1) * _u[_qp] / _h[_qp]);
   else
     return 0;
 }
