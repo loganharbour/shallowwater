@@ -25,8 +25,8 @@ protected:
   /// h equation index
   const unsigned int _h_ivar;
 
-  /// Bathymetry function
-  Function & _b;
+  /// Coupled bathymetry variable
+  const VariableGradient & _grad_b;
 
   /// Component of b to evaluate
   const unsigned int _comp;
