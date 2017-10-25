@@ -41,9 +41,10 @@ SVPressure::computeQpResidual()
 Real
 SVPressure::computeQpOffDiagJacobian(unsigned int jvar)
 {
-  // With respect to h (rest are zero)
+  // With respect to h
   if (jvar == _h_ivar)
     return -_phi[_j][_qp] * _grad_test[_i][_qp](_comp) * _g * _h[_qp];
+  // Rest are zero
   else
     return 0;
 }
