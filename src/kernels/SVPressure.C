@@ -7,7 +7,7 @@ validParams<SVPressure>()
   InputParameters params = validParams<Kernel>();
   params.addClassDescription("Computes the residual and Jacobian contribution for "
                              "the pressure term: $0.5 gh^2$ in the Saint-Venant "
-                             "equatons.");
+                             "equations.");
 
   params.addRequiredCoupledVar("h", "The water height variable.");
   params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
