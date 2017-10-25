@@ -1,0 +1,49 @@
+#include "SVPressure.h"
+
+template <>
+InputParameters
+validParams<SVPressure>()
+{
+  InputParameters params = validParams<Kernel>();
+  params.addClassDescription("Computes the residual and Jacobian contribution for "
+                             "the pressure term: $0.5 gh^2$ in the Saint-Venant "
+                             "equatons.");
+
+  params.addRequiredCoupledVar("h", "The water height variable.");
+  params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
+  params.addRequiredParam<Real>("g", "The gravity constant.");
+
+  return params;
+}
+
+SVPressure::SVPressure(const InputParameters & parameters)
+  : Kernel(parameters),
+    _h(coupledValue("h")),
+    _h_ivar(coupled("h")),
+    _comp(getParam<unsigned int>("component")),
+    _g(getParam<Real>("g"))
+{
+  // Sanity check on component
+  if (_comp > 1)
+    mooseError("component in SVPressure can only take values 0 or 1");
+
+  // Sanity check on gravity
+  if (_g < 0)
+    mooseError("Gravity constant g is negative in SVPressure.");
+}
+
+Real
+SVPressure::computeQpResidual()
+{
+  return -0.5 * _grad_test[_i][_qp](_comp) * _g * _h[_qp] * _h[_qp];
+}
+
+Real
+SVPressure::computeQpOffDiagJacobian(unsigned int jvar)
+{
+  // With respect to h (rest are zero)
+  if (jvar == _h_ivar)
+    return -_phi[_j][_qp] * _grad_test[_i][_qp](_comp) * _g * _h[_qp];
+  else
+    return 0;
+}

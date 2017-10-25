@@ -8,6 +8,7 @@
 #include "SVAdvection.h"
 #include "SVBathymetry.h"
 #include "SVContinuity.h"
+#include "SVPressure.h"
 
 template <>
 InputParameters
@@ -59,6 +60,7 @@ shallowwaterApp::registerObjects(Factory & factory)
   registerKernel(SVAdvection);
   registerKernel(SVBathymetry);
   registerKernel(SVContinuity);
+  registerKernel(SVPressure);
 }
 
 void
