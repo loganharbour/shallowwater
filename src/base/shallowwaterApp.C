@@ -6,6 +6,7 @@
 
 // Shallow water kernels
 #include "SVAdvection.h"
+#include "SVArtificialViscosity.h"
 #include "SVBathymetry.h"
 #include "SVContinuity.h"
 #include "SVPressure.h"
@@ -58,6 +59,7 @@ void
 shallowwaterApp::registerObjects(Factory & factory)
 {
   registerKernel(SVAdvection);
+  registerKernel(SVArtificialViscosity);
   registerKernel(SVBathymetry);
   registerKernel(SVContinuity);
   registerKernel(SVPressure);
