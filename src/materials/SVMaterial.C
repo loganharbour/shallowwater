@@ -41,7 +41,7 @@ validParams<SVMaterial>()
                        " ENTROPY).");
 
   // Constants
-  params.addParam<Real>("g", 9.80665, "Constant of gravity.");
+  params.addParam<Real>("g", 9.80665, "Constant of gravity (m/s^2).");
   params.addParam<Real>("C_entropy", 1.0, "The coefficient for entropy viscosity.");
   params.addParam<Real>("C_jump", 1.0, "The coefficient for jumps.");
   params.addParam<Real>("C_max", 0.5, "The coefficient for first-order viscosity.");
