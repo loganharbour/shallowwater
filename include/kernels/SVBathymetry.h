@@ -5,7 +5,6 @@
 
 // Forward Declarations
 class SVBathymetry;
-class Function;
 
 template <>
 InputParameters validParams<SVBathymetry>();
