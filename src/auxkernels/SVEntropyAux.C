@@ -28,6 +28,15 @@ SVEntropyAux::SVEntropyAux(const InputParameters & parameters)
   // Sanity check on gravity
   if (_g < 0)
     mooseError("Gravity constant g is negative in SVEntropyAux");
+
+  // y-component of momentum is required but not given
+  if (_mesh.dimension() == 2 && !isCoupled("q_y"))
+    mooseError("SVEntropyAux requires the y-component of momentum, q_y in 2D");
+  // y-component of momentum is given but is not required
+
+  if (_mesh.dimension() == 1 && isCoupled("q_y"))
+    mooseError("SVEntropyAux does not require the y-component of momentum, q_y"
+               " in 1D but it was provided");
 }
 
 Real SVEntropyAux::computeValue()
