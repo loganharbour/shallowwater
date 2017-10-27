@@ -11,7 +11,7 @@ validParams<SVPressure>()
 
   params.addRequiredCoupledVar("h", "The water height variable.");
   params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
-  params.addRequiredParam<Real>("g", "The gravity constant.");
+  params.addParam<Real>("g", 9.80665, "The gravity constant.");
 
   return params;
 }

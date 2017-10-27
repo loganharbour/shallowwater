@@ -16,7 +16,7 @@ validParams<SVBathymetry>()
                                " data (describes the topography of the bottom"
                                "terrain of the fluid body");
   params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
-  params.addRequiredParam<Real>("g", "Constant of gravity (add units here).");
+  params.addParam<Real>("g", 9.80665, "Constant of gravity (m/s^2).");
 
   return params;
 }
@@ -32,6 +32,10 @@ SVBathymetry::SVBathymetry(const InputParameters & parameters)
   // Sanity check on component
   if (_comp > 1)
     mooseError("component in SVBathymetry can only take values 0 or 1");
+
+  // Sanity check on gravity
+  if (_g < 0)
+    mooseError("Gravity constant g is negative in SVBathymetry.");
 }
 
 Real

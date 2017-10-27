@@ -41,7 +41,7 @@ validParams<SVMaterial>()
                        " ENTROPY).");
 
   // Constants
-  params.addParam<Real>("g", 9.81, "Constant of gravity.");
+  params.addParam<Real>("g", 9.80665, "Constant of gravity.");
   params.addParam<Real>("C_entropy", 1.0, "The coefficient for entropy viscosity.");
   params.addParam<Real>("C_jump", 1.0, "The coefficient for jumps.");
   params.addParam<Real>("C_max", 0.5, "The coefficient for first-order viscosity.");
@@ -92,7 +92,7 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
   // y-component of momentum is required but not given
   if (_mesh_dimension == 2 && !isCoupled("q_y"))
     mooseError("SVMaterial requires the y-component of momentum, q_y in 2D");
-    
+
   // y-component of momentum is given but is not required
   if (_mesh_dimension == 1 && isCoupled("q_y"))
     mooseError("SVMaterial does not require the y-component of momentum, q_y"
@@ -115,6 +115,10 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
       mooseError("SVMaterial does not require the y-component of the entropy "
                  "flux, G, for viscosity_type = ENTROPY in 1D but it was given");
   }
+
+  // Sanity check on gravity
+  if (_g < 0)
+    mooseError("Gravity constant g is negative in SVMaterial.");
 }
 
 void
