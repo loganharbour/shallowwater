@@ -4,12 +4,15 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
-// Shallow water kernels
+// Saint-Venant kernels
 #include "SVAdvection.h"
 #include "SVArtificialViscosity.h"
 #include "SVBathymetry.h"
 #include "SVContinuity.h"
 #include "SVPressure.h"
+
+// Saint-Venant material
+#include "SVMaterial.h"
 
 template <>
 InputParameters
@@ -58,11 +61,15 @@ shallowwaterApp__registerObjects(Factory & factory)
 void
 shallowwaterApp::registerObjects(Factory & factory)
 {
+  // Saint-Venant kernels
   registerKernel(SVAdvection);
   registerKernel(SVArtificialViscosity);
   registerKernel(SVBathymetry);
   registerKernel(SVContinuity);
   registerKernel(SVPressure);
+
+  // Saint-Venant material
+  registerMaterial(SVMaterial);
 }
 
 void
