@@ -23,10 +23,13 @@ protected:
   const VariableValue & _h;
 
   /// Coupled momentum variables
-  const VariableValue & _q_x, _q_y;
+  const VariableValue & _q_x;
+  const VariableValue & _q_y;
 
   /// Equation indices
-  const unsigned int _h_ivar, _q_x_ivar, _q_y_ivar;
+  const unsigned int _h_ivar;
+  const unsigned int _q_x_ivar;
+  const unsigned int _q_y_ivar;
 
   /// Component index
   const unsigned int _comp;
