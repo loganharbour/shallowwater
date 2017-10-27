@@ -4,6 +4,9 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
+// Saint-Venant auxkernels
+#include "SVEntropyAux.h"
+
 // Saint-Venant kernels
 #include "SVAdvection.h"
 #include "SVArtificialViscosity.h"
@@ -61,6 +64,9 @@ shallowwaterApp__registerObjects(Factory & factory)
 void
 shallowwaterApp::registerObjects(Factory & factory)
 {
+  // Saint-Venant auxkernels
+  registerKernel(SVEntropyAux);
+  
   // Saint-Venant kernels
   registerKernel(SVAdvection);
   registerKernel(SVArtificialViscosity);
