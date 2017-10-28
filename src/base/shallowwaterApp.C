@@ -7,6 +7,7 @@
 // Saint-Venant auxkernels
 #include "SVEntropyAux.h"
 #include "SVPressureAux.h"
+#include "SVVelocityAux.h"
 
 // Saint-Venant kernels
 #include "SVAdvection.h"
@@ -68,6 +69,7 @@ shallowwaterApp::registerObjects(Factory & factory)
   // Saint-Venant auxkernels
   registerKernel(SVEntropyAux);
   registerKernel(SVPressureAux);
+  registerKernel(SVVelocityAux);
 
   // Saint-Venant kernels
   registerKernel(SVAdvection);
