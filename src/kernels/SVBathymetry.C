@@ -29,9 +29,11 @@ SVBathymetry::SVBathymetry(const InputParameters & parameters)
     _comp(getParam<unsigned int>("component")),
     _g(getParam<Real>("g"))
 {
-  // Sanity check on component
+  // Sanity checks on component
   if (_comp > 1)
-    mooseError("component in SVBathymetry can only take values 0 or 1");
+    mooseError("component in SVAdvection can only take values 0 or 1");
+  if (_comp == 1 && _mesh.dimension() != 2)
+    mooseError("component in SVAdvection is 2 but the mesh is 1D")
 
   // Sanity check on gravity
   if (_g < 0)

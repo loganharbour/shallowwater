@@ -33,9 +33,11 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
     _q_y_ivar(coupled("q_y")),
     _comp(getParam<unsigned int>("component"))
 {
-  // Sanity check on component
+  // Sanity checks on component
   if (_comp > 1)
     mooseError("component in SVAdvection can only take values 0 or 1");
+  if (_comp == 2 && _mesh.dimension() != 2)
+    mooseError("component in SVAdvection is 2 but the mesh is 1D")
 
   // y-component of momentum is required but not given
   if (_mesh.dimension() == 2 && !isCoupled("q_y"))
