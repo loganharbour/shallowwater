@@ -25,9 +25,9 @@ SVPressure::SVPressure(const InputParameters & parameters)
 {
   // Sanity checks on component
   if (_comp > 1)
-    mooseError("component in SVAdvection can only take values 0 or 1");
+    mooseError("component in SVPressure can only take values 0 or 1");
   if (_comp == 1 && _mesh.dimension() != 2)
-    mooseError("component in SVAdvection is 1 but the mesh is 1D")
+    mooseError("component in SVPressure is 1 but the mesh is 1D")
 
   // Sanity check on gravity
   if (_g < 0)
