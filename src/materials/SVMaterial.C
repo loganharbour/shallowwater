@@ -60,20 +60,20 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
     // Coupled variables
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
-    _q_y(coupledValue("q_y")),
+    _q_y(isCoupled("q_y") ? coupledValue("q_y") : _zero),
 
     // Coupled bathymetry aux variable
-    _b(coupledValue("b")),
+    _b(isCoupled("b") ? coupledValue("b") : _zero),
 
     // Coupled entropy aux variables
-    _E(coupledValue("entropy")),
-    _E_old(coupledValueOld("entropy")),
-    _E_older(coupledValueOlder("entropy")),
-    _grad_F(coupledGradient("F")),
-    _grad_G(coupledGradient("G")),
+    _E(isCoupled("entropy") ? coupledValue("entropy") : _zero),
+    _E_old(isCoupled("entropy") ? coupledValueOld("entropy") : _zero),
+    _E_older(isCoupled("entropy") ? coupledValueOlder("entropy") : _zero),
+    _grad_F(isCoupled("F") ? coupledGradient("F") : _grad_zero),
+    _grad_G(isCoupled("G") ? coupledGradient("G") : _grad_zero),
 
     // Coupled jump aux variable
-    _jump(coupledValue("jump_entropy_flux")),
+    _jump(isCoupled("jump_entropy_flux") ? coupledValue("jump_entropy_flux") : _zero),
 
     // Constants
     _g(getParam<Real>("gravity")),
