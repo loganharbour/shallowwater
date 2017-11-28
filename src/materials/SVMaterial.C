@@ -76,7 +76,7 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
     _jump(isCoupled("jump_entropy_flux") ? coupledValue("jump_entropy_flux") : _zero),
 
     // Constants
-    _g(getParam<Real>("gravity")),
+    _g(getParam<Real>("g")),
     _C_entropy(getParam<Real>("C_entropy")),
     _C_jump(getParam<Real>("C_jump")),
     _C_max(getParam<Real>("C_max")),
