@@ -24,7 +24,7 @@ SVEntropyAux::SVEntropyAux(const InputParameters & parameters)
   : AuxKernel(parameters),
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
-    _q_y(coupledValue("q_y")),
+    _q_y(isCoupled("q_y") ? coupledValue("q_y") : _zero),
     _g(getParam<Real>("g"))
 {
   // Sanity check on gravity

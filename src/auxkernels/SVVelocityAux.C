@@ -22,14 +22,14 @@ SVVelocityAux::SVVelocityAux(const InputParameters & parameters)
   : AuxKernel(parameters),
     _h(coupledValue("h")),
     _q_x(coupledValue("q_x")),
-    _q_y(coupledValue("q_y")),
+    _q_y(isCoupled("q_y") ? coupledValue("q_y") : _zero),
     _mesh_dimension(_mesh.dimension())
 {
   // y-component of momentum is required but not given
   if (_mesh_dimension == 2 && !isCoupled("q_y"))
     mooseError("SVVelocityAux requires the y-component of momentum, q_y in 2D");
-  // y-component of momentum is given but is not required
 
+  // y-component of momentum is given but is not required
   if (_mesh_dimension == 1 && isCoupled("q_y"))
     mooseError("SVVelocityAux does not require the y-component of momentum, q_y"
                " in 1D but it was provided");
