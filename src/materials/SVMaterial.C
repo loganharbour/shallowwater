@@ -140,7 +140,7 @@ SVMaterial::computeQpProperties()
   Real c = std::sqrt(_g * _h[_qp]);
 
   // First-order viscosity
-  _kappa_max[_qp] = _C_max * _h_cell * (3.0 / _h[_qp] + c);
+  _kappa_max[_qp] = _C_max * _h_cell * (v_q.norm() / _h[_qp] + c);
 
   switch (_viscosity_type)
   {
