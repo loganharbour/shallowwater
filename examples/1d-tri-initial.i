@@ -1,7 +1,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 1000
+  nx = 100
   xmax = 1
 []
 
@@ -79,7 +79,6 @@
   [./sv_material]
     type = SVMaterial
     viscosity_type = FIRST_ORDER
-    block = 0
     h = h
     q_x = q_x
   [../]
@@ -113,15 +112,37 @@
   [../]
 []
 
+[Postprocessors]
+  [./dt]
+    type = TimeStepCFL
+    h = h
+    q_x = q_x
+  [../]
+
+  [./h_integral]
+    type = ElementIntegralVariablePostprocessor
+    variable = h
+  [../]
+[]
+
 [Executioner]
   type = Transient
 
-  dt = 1e-4
-  num_steps = 40000
+  end_time = 10
 
   [./Quadrature]
     type = GAUSS
     order = SECOND
+  [../]
+
+  [./TimeIntegrator]
+    type = CrankNicolson
+  [../]
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = dt
+    dt = 1e-6
   [../]
 []
 
