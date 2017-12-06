@@ -20,6 +20,9 @@
 // Saint-Venant material
 #include "SVMaterial.h"
 
+// Postprocessors
+#include "TimeStepCFL.h"
+
 template <>
 InputParameters
 validParams<shallowwaterApp>()
@@ -82,6 +85,9 @@ shallowwaterApp::registerObjects(Factory & factory)
 
   // Saint-Venant material
   registerMaterial(SVMaterial);
+
+  // Postprocessors
+  registerPostprocessor(TimeStepCFL);
 }
 
 void
