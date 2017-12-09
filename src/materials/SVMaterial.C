@@ -127,6 +127,7 @@ SVMaterial::computeProperties()
   // Characteristic length: no need to call this at every quadrature point
   _h_cell = std::pow(_current_elem->volume(), 1 / _mesh_dimension);
 
+  // This exectues SVMaterial::computeQpProperties as necessary
   Material::computeProperties();
 }
 
