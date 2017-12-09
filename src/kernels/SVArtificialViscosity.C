@@ -22,17 +22,22 @@ SVArtificialViscosity::SVArtificialViscosity(const InputParameters & parameters)
 Real
 SVArtificialViscosity::computeQpResidual()
 {
-  // Cell is on the boundary
-  if (_mesh.isBoundaryNode(_current_elem->node(_i)))
-    return 0;
-  // Is not on the boundary
-  else
+  // Only add if node is not on the boundary
+  if (!_mesh.isBoundaryNode(_current_elem->node(_i)))
     return _kappa[_qp] * _grad_u[_qp] * _grad_test[_i][_qp];
+  // Node is not on the boundary
+  else
+    return 0;
 }
 
 Real
 SVArtificialViscosity::computeQpJacobian()
 {
+  // Only add if node is not on the boundary
   // Approximate by the parabolic regularization
-  return _kappa[_qp] * _grad_phi[_j][_qp] * _grad_test[_i][_qp];
+  if (!_mesh.isBoundaryNode(_current_elem->node(_i)))
+    return _kappa[_qp] * _grad_phi[_j][_qp] * _grad_test[_i][_qp];
+  // Node is not on the boundary
+  else
+    return 0;
 }
