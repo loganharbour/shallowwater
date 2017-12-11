@@ -46,7 +46,7 @@ SVBathymetry::SVBathymetry(const InputParameters & parameters)
 Real
 SVBathymetry::computeQpResidual()
 {
-  return _g * _h[_qp] * _grad_b[_qp](_comp);
+  return _g * _h[_qp] * _grad_b[_qp](_comp) * _test[_i][_qp];
 }
 
 Real
