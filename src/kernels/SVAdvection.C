@@ -43,7 +43,6 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
   if (_mesh.dimension() == 2 && !isCoupled("q_y"))
     mooseError("SVAdvection requires the y-component of momentum, q_y in 2D");
   // y-component of momentum is given but is not required
-
   if (_mesh.dimension() == 1 && isCoupled("q_y"))
     mooseError("SVAdvection does not require the y-component of momentum, q_y"
                " in 1D but it was provided");
