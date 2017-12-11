@@ -17,7 +17,7 @@ validParams<SVBathymetry>()
   params.addRequiredCoupledVar("h", "The water height variable.");
   params.addRequiredCoupledVar("b", "The aux variable that represents the bathymetry"
                                " data (describes the topography of the bottom"
-                               "terrain of the fluid body");
+                               "terrain of the fluid body)");
   params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
   params.addParam<Real>("g", 9.80665, "Constant of gravity (m/s^2).");
 
