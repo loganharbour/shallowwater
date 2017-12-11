@@ -69,7 +69,7 @@ SVAdvection::computeQpJacobian()
   v(_comp) *= 2;
 
   // -\int (2qx/h dbdx + qy/h dbdy) = -\int (\vec{v} \vec{grad}b) / h
-  return -_phi[_j][_qp] / _h[_qp] * (v * _grad_test[_i][_qp]);
+  return -_phi[_j][_qp] * (v * _grad_test[_i][_qp]);
 }
 
 Real
