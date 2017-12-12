@@ -1,7 +1,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 500
+  nx = 100
   xmin = 0
   xmax = 25
 []
@@ -63,28 +63,62 @@
 
   [./h_plus_b]
   [../]
+
+  [./h_residual]
+  [../]
+
+  [./q_x_residual]
+  [../]
+
+  [./h_time_derivative_residual]
+  [../]
+
+  [./h_continuity_residual]
+  [../]
+
+  [./h_viscosity_continuity_residual]
+  [../]
+
+  [./q_x_time_derivative_residual]
+  [../]
+
+  [./q_x_advection_residual]
+  [../]
+
+  [./q_x_pressure_residual]
+  [../]
+
+  [./q_x_viscosity_continuity_residual]
+  [../]
+
+  [./q_x_bathymetry_residual]
+  [../]
 []
 
 [Kernels]
   [./h_time_derivative]
     type = TimeDerivative
     variable = h
+    save_in = h_time_derivative_residual
   [../]
 
   [./h_continuity]
     type = SVContinuity
     variable = h
     q_x = q_x
+    save_in = h_continuity_residual
   [../]
 
-  [./h_viscosity_continuity]
-    type = SVArtificialViscosity
-    variable = h
-  [../]
+  #[./h_viscosity_continuity]
+  #  type = SVArtificialViscosity
+  #  variable = h
+  #  save_in = h_viscosity_continuity_residual
+  #[../]
 
   [./q_x_time_derivative]
     type = TimeDerivative
     variable = q_x
+    save_in = q_x_time_derivative_residual
   [../]
 
   [./q_x_advection]
@@ -93,6 +127,7 @@
     h = h
     q_x = q_x
     component = 0
+    save_in = q_x_advection_residual
   [../]
 
   [./q_x_pressure]
@@ -100,12 +135,14 @@
     variable = q_x
     h = h
     component = 0
+    save_in = q_x_pressure_residual
   [../]
 
-  [./q_x_viscosity_continuity]
-    type = SVArtificialViscosity
-    variable = q_x
-  [../]
+  #[./q_x_viscosity_continuity]
+  #  type = SVArtificialViscosity
+  #  variable = q_x
+  #  save_in = q_x_viscosity_continuity_residual
+  #[../]
 
   [./q_x_bathymetry]
     type = SVBathymetry
@@ -113,6 +150,7 @@
     h = h
     b = grad_b
     component = 0
+    save_in = q_x_bathymetry_residual
   [../]
 []
 
@@ -142,6 +180,18 @@
     function = 'h + b'
     args = 'h b'
   [../]
+
+  [./h_residual_kernel]
+    type = DebugResidualAux
+    variable = h_residual
+    debug_variable = h
+  [../]
+
+  [./q_x_residual_kernel]
+    type = DebugResidualAux
+    variable = q_x_residual
+    debug_variable = q_x
+  [../]
 []
 
 [Materials]
@@ -154,20 +204,6 @@
 []
 
 [BCs]
-  [./BC_h_left]
-    type = DirichletBC
-    variable = h
-    boundary = left
-    value = 0.5
-  [../]
-
-  [./BC_h_right]
-    type = DirichletBC
-    variable = h
-    boundary = right
-    value = 0.5
-  [../]
-
   [./BC_q_x_left]
     type = DirichletBC
     variable = q_x
@@ -196,22 +232,32 @@
   [../]
 []
 
+[Preconditioning]
+  active = 'FDP'
+
+  [./PBP]
+    type = PBP
+    solve_order = 'h q_x'
+    preconditioner  = 'AMG AMG'
+  [../]
+
+  [./FDP]
+    type = FDP
+    full = true
+  [../]
+[]
 
 [Executioner]
   type = Transient
+  #solve_type = JFNK
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'lu'
 
-  end_time = 10
+  end_time = 1
 
-  [./Quadrature]
-    type = GAUSS
-    order = SECOND
-  [../]
-
-  [./TimeIntegrator]
-    type = CrankNicolson
-  [../]
+  #[./TimeIntegrator]
+  #  type = CrankNicolson
+  #[../]
 
   [./TimeStepper]
     type = PostprocessorDT
