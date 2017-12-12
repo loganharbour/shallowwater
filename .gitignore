@@ -207,4 +207,5 @@ python/peacock/tests/postprocessor_tab/TestPostprocessorPluginManager_test_scrip
 # Docs
 !doc/Chen-Kurganov-Lei-Liu.pdf
 !doc/hansel-dissertation.pdf
+!doc/SW_analytic.pdf
 !doc/Tadmor_Zhong_SW_Abel2008.pdf
