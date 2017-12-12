@@ -168,7 +168,7 @@
 [Materials]
   [./sv_material]
     type = SVMaterial
-    viscosity_type = FIRST_ORDER
+    viscosity_type = NONE
     h = h
     q_x = q
   [../]
