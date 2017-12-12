@@ -33,11 +33,6 @@
     value = '0.5 - (x > 8) * (x < 12) * (0.2 - 0.05 * (x - 10)^2)'
   [../]
 
-  [./b_func]
-    type = ParsedFunction
-    value = '(x > 8) * (x < 12) * (0.2 - 0.05 * (x - 10)^2)'
-  [../]
-
   [./grad_b_func]
     type = ParsedFunction
     value = '(x > 8) * (x < 12) * (1 - 0.1 * x)'
@@ -65,13 +60,6 @@
 []
 
 [AuxVariables]
-  [./b]
-    [./InitialCondition]
-      type = FunctionIC
-      function = b_func
-    [../]
-  [../]
-
   [./grad_b]
     [./InitialCondition]
       type = FunctionIC
@@ -80,9 +68,6 @@
   [../]
 
   [./v]
-  [../]
-
-  [./h_plus_b]
   [../]
 
   [./h_residual]
@@ -143,13 +128,6 @@
     variable = v
     function = 'q / h'
     args = 'q h'
-  [../]
-
-  [./h_plus_b_kernel]
-    type = ParsedAux
-    variable = h_plus_b
-    function = 'h + b'
-    args = 'h b'
   [../]
 
   [./h_residual_kernel]
