@@ -1,7 +1,7 @@
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 100
+  nx = 500
   xmin = 0
   xmax = 25
 []
@@ -33,7 +33,7 @@
     [../]
   [../]
 
-  [./q_x]
+  [./q]
     family = LAGRANGE
     order = FIRST
     [./InitialCondition]
@@ -58,7 +58,7 @@
     [../]
   [../]
 
-  [./v_x]
+  [./v]
   [../]
 
   [./h_plus_b]
@@ -67,31 +67,7 @@
   [./h_residual]
   [../]
 
-  [./q_x_residual]
-  [../]
-
-  [./h_time_derivative_residual]
-  [../]
-
-  [./h_continuity_residual]
-  [../]
-
-  [./h_viscosity_continuity_residual]
-  [../]
-
-  [./q_x_time_derivative_residual]
-  [../]
-
-  [./q_x_advection_residual]
-  [../]
-
-  [./q_x_pressure_residual]
-  [../]
-
-  [./q_x_viscosity_continuity_residual]
-  [../]
-
-  [./q_x_bathymetry_residual]
+  [./q_residual]
   [../]
 []
 
@@ -99,79 +75,53 @@
   [./h_time_derivative]
     type = TimeDerivative
     variable = h
-    save_in = h_time_derivative_residual
   [../]
 
   [./h_continuity]
     type = SVContinuity
+    implicit = false
     variable = h
-    q_x = q_x
-    save_in = h_continuity_residual
+    q_x = q
   [../]
-
-  #[./h_viscosity_continuity]
-  #  type = SVArtificialViscosity
-  #  variable = h
-  #  save_in = h_viscosity_continuity_residual
-  #[../]
-
-  [./q_x_time_derivative]
+  
+  [./q_time_derivative]
     type = TimeDerivative
-    variable = q_x
-    save_in = q_x_time_derivative_residual
+    variable = q
   [../]
 
-  [./q_x_advection]
+  [./q_advection]
     type = SVAdvection
-    variable = q_x
+    implicit = false
+    variable = q
     h = h
-    q_x = q_x
+    q_x = q
     component = 0
-    save_in = q_x_advection_residual
   [../]
 
-  [./q_x_pressure]
+  [./q_pressure]
     type = SVPressure
-    variable = q_x
+    implicit = false
+    variable = q
     h = h
     component = 0
-    save_in = q_x_pressure_residual
   [../]
 
-  #[./q_x_viscosity_continuity]
-  #  type = SVArtificialViscosity
-  #  variable = q_x
-  #  save_in = q_x_viscosity_continuity_residual
-  #[../]
-
-  [./q_x_bathymetry]
+  [./q_bathymetry]
     type = SVBathymetry
-    variable = q_x
+    implicit = false
+    variable = q
     h = h
     b = grad_b
     component = 0
-    save_in = q_x_bathymetry_residual
   [../]
 []
 
 [AuxKernels]
-  [./b_kernel]
-    type = FunctionAux
-    variable = b
-    function = b_func
-  [../]
-
-  [./grad_b_kernel]
-    type = FunctionAux
-    variable = grad_b
-    function = grad_b_func
-  [../]
-
-  [./v_x_kernel]
+  [./v_kernel]
     type = ParsedAux
-    variable = v_x
-    function = 'q_x / h'
-    args = 'q_x h'
+    variable = v
+    function = 'q / h'
+    args = 'q h'
   [../]
 
   [./h_plus_b_kernel]
@@ -187,10 +137,10 @@
     debug_variable = h
   [../]
 
-  [./q_x_residual_kernel]
+  [./q_residual_kernel]
     type = DebugResidualAux
-    variable = q_x_residual
-    debug_variable = q_x
+    variable = q_residual
+    debug_variable = q
   [../]
 []
 
@@ -199,71 +149,34 @@
     type = SVMaterial
     viscosity_type = FIRST_ORDER
     h = h
-    q_x = q_x
+    q_x = q
   [../]
 []
 
 [BCs]
-  [./BC_q_x_left]
+  [./BC_q_left]
     type = DirichletBC
-    variable = q_x
+    variable = q
     boundary = left
     value = 0
   [../]
 
-  [./BC_q_x_right]
+  [./BC_q_right]
     type = DirichletBC
-    variable = q_x
+    variable = q
     boundary = right
     value = 0
   [../]
 []
 
-[Postprocessors]
-  [./dt]
-    type = TimeStepCFL
-    h = h
-    q_x = q_x
-  [../]
-
-  [./h_integral]
-    type = ElementIntegralVariablePostprocessor
-    variable = h
-  [../]
-[]
-
-[Preconditioning]
-  active = 'FDP'
-
-  [./PBP]
-    type = PBP
-    solve_order = 'h q_x'
-    preconditioner  = 'AMG AMG'
-  [../]
-
-  [./FDP]
-    type = FDP
-    full = true
-  [../]
-[]
-
 [Executioner]
   type = Transient
-  #solve_type = JFNK
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'lu'
 
-  end_time = 1
+  scheme = explicit-euler
+  solve_type = LINEAR
 
-  #[./TimeIntegrator]
-  #  type = CrankNicolson
-  #[../]
-
-  [./TimeStepper]
-    type = PostprocessorDT
-    postprocessor = dt
-    dt = 1e-6
-  [../]
+  num_steps = 10
+  dt = 1e-6
 []
 
 [Outputs]
