@@ -1,3 +1,24 @@
+# *NOTE: Need to change once bathymetry hack is removed.
+#
+# Case 3.1.1 "Lake at rest with an immersed bump" from
+# "SWASHES: a compilation of Shallow Water Analytic Solutiosn for Hydraulic
+#  and Environmental Studies" by Delestre, et. al (doc/refs/SV_analytic.pdf)
+#
+# We have a domain of length 25 with bathymetry given by
+#   b(x) = 0.2 - 0.05(x - 10)^2,  if 8 < x < 12,
+#          0,                     otherwise.
+#
+# The topography is totally immersed such that the intial height is
+#   h(x) = 0.5 - b(x),
+# with a zero-flow initial condition of
+#   q(x) = 0.
+#
+# The zero-flow at the boundary is enforced by
+#   q(0) = q(25) = 0.
+#
+# As the initial conditions are the steady state, the solution is solved
+# explicitly and the residuals are expected to be 0 at the first time step.
+
 [Mesh]
   type = GeneratedMesh
   dim = 1
@@ -83,7 +104,7 @@
     variable = h
     q_x = q
   [../]
-  
+
   [./q_time_derivative]
     type = TimeDerivative
     variable = q
