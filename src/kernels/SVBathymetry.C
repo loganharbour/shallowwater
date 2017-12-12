@@ -28,7 +28,8 @@ SVBathymetry::SVBathymetry(const InputParameters & parameters)
   : Kernel(parameters),
     _h(coupledValue("h")),
     _h_ivar(coupled("h")),
-    _grad_b(coupledGradient("b")),
+    // _grad_b(coupledGradient("b")),
+    _grad_b(coupledValue("b")),
     _comp(getParam<unsigned int>("component")),
     _g(getParam<Real>("g"))
 {
@@ -46,7 +47,8 @@ SVBathymetry::SVBathymetry(const InputParameters & parameters)
 Real
 SVBathymetry::computeQpResidual()
 {
-  return _g * _h[_qp] * _grad_b[_qp](_comp) * _test[_i][_qp];
+  // return _g * _h[_qp] * _grad_b[_qp](_comp) * _test[_i][_qp];
+  return _g * _h[_qp] * _grad_b[_qp] * _test[_i][_qp];
 }
 
 Real
@@ -54,7 +56,8 @@ SVBathymetry::computeQpOffDiagJacobian(unsigned int jvar)
 {
   // With respect to h
   if (jvar == _h_ivar)
-    return _phi[_j][_qp] * _g * _grad_b[_qp](_comp) * _test[_i][_qp];
+    // return _phi[_j][_qp] * _g * _grad_b[_qp](_comp) * _test[_i][_qp];
+    return _phi[_j][_qp] * _g * _grad_b[_qp] * _test[_i][_qp];
   // With repsect to q_x or q_y
   else
     return 0;

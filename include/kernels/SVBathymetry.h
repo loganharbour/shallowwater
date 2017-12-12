@@ -25,7 +25,8 @@ protected:
   const unsigned int _h_ivar;
 
   /// Coupled bathymetry variable
-  const VariableGradient & _grad_b;
+  // const VariableGradient & _grad_b;
+  const VariableValue & _grad_b;
 
   /// Component of b to evaluate
   const unsigned int _comp;
