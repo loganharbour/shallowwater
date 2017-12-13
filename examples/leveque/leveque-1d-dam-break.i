@@ -144,14 +144,6 @@
   [../]
 []
 
-[Postprocessors]
-  [./dt]
-    type = TimeStepCFL
-    h = h
-    q_x = q
-  [../]
-[]
-
 [Executioner]
   type = Transient
 
