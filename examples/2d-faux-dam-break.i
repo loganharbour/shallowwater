@@ -55,7 +55,6 @@
 
   [./h_continuity]
     type = SVContinuity
-    #implicit = false
     variable = h
     q_x = q_x
     q_y = q_y
@@ -63,7 +62,6 @@
 
   [./h_artificial_viscosity]
     type = SVArtificialViscosity
-    #implicit = false
     variable = h
   [../]
 
@@ -74,7 +72,6 @@
 
   [./q_x_advection]
     type = SVAdvection
-    #implicit = false
     variable = q_x
     h = h
     q_x = q_x
@@ -84,7 +81,6 @@
 
   [./q_x_pressure]
     type = SVPressure
-    #implicit = false
     variable = q_x
     h = h
     component = 0
@@ -92,7 +88,6 @@
 
   [./q_x_artificial_viscosity]
     type = SVArtificialViscosity
-    #implicit = false
     variable = q_x
   [../]
 
@@ -103,7 +98,6 @@
 
   [./q_y_advection]
     type = SVAdvection
-    #implicit = false
     variable = q_y
     h = h
     q_x = q_x
@@ -113,7 +107,6 @@
 
   [./q_y_pressure]
     type = SVPressure
-    #implicit = false
     variable = q_y
     h = h
     component = 1
@@ -121,7 +114,6 @@
 
   [./q_y_artificial_viscosity]
     type = SVArtificialViscosity
-    #implicit = false
     variable = q_y
   [../]
 []
@@ -137,12 +129,6 @@
 []
 
 [BCs]
-  [./BC_h]
-    type = NeumannBC
-    variable = h
-    boundary = 'top left bottom right'
-  [../]
-
   [./BC_qx]
     type = DirichletBC
     variable = q_x
@@ -171,11 +157,8 @@
 [Executioner]
   type = Transient
 
-  #scheme = explicit-tvd-rk-2
+  end_time = 100
 
-  end_time = 200
-  #num_steps = 50000
-  #dt = 1e-3
   [./TimeStepper]
     type = PostprocessorDT
     postprocessor = dt
