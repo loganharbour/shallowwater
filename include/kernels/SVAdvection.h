@@ -31,7 +31,7 @@ protected:
   const unsigned int _q_x_ivar;
   const unsigned int _q_y_ivar;
 
-  /// Component index
+  /// Component of momentum to evaluate
   const unsigned int _comp;
 };
 

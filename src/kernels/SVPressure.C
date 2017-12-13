@@ -13,7 +13,11 @@ validParams<SVPressure>()
                              "equations.");
 
   params.addRequiredCoupledVar("h", "The water height variable.");
-  params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
+
+  MooseEnum components("x=0 y=1");
+  params.addRequiredParam<MooseEnum>("component", components, "The component to"
+                                     "evaluate [x|y].");
+
   params.addParam<Real>("g", 9.80665, "The gravity constant (m/s^2).");
 
   return params;
@@ -23,14 +27,12 @@ SVPressure::SVPressure(const InputParameters & parameters)
   : Kernel(parameters),
     _h(coupledValue("h")),
     _h_ivar(coupled("h")),
-    _comp(getParam<unsigned int>("component")),
+    _comp(getParam<MooseEnum>("component")),
     _g(getParam<Real>("g"))
 {
-  // Sanity checks on component
-  if (_comp > 1)
-    mooseError("component in SVPressure can only take values 0 or 1");
+  // Sanity check on component
   if (_comp == 1 && _mesh.dimension() != 2)
-    mooseError("component in SVPressure is 1 but the mesh is 1D");
+    mooseError("Component in SVPressure is y but the mesh is 1D");
 
   // Sanity check on gravity
   if (_g < 0)

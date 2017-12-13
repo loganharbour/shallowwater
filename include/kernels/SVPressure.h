@@ -24,7 +24,7 @@ protected:
   /// h equation index
   const unsigned int _h_ivar;
 
-  /// Component of b to evaluate
+  /// Component to evaluate
   const unsigned int _comp;
 
   /// Constant of gravity

@@ -92,7 +92,7 @@
     variable = q
     h = h
     q_x = q
-    component = 0
+    component = x
   [../]
 
   [./q_pressure]
@@ -100,7 +100,7 @@
     implicit = false
     variable = q
     h = h
-    component = 0
+    component = x
   [../]
 
   [./q_artificial_viscosity]

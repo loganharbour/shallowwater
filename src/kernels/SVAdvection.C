@@ -17,8 +17,10 @@ validParams<SVAdvection>()
                                " of the momentum.");
   params.addCoupledVar("q_y", "The variable that expresses the y-component of "
                        "the momentum (required only in 2D).");
-  params.addRequiredParam<unsigned int>("component", "The component of the momentum "
-                                        "equation to evaluate (0,1)->(x,y).");
+
+  MooseEnum components("x=0 y=1");
+  params.addRequiredParam<MooseEnum>("component", components, "The component of"
+                                     "the momentum equation to evaluate [x|y].");
 
   return params;
 }
@@ -31,13 +33,11 @@ SVAdvection::SVAdvection(const InputParameters & parameters)
     _h_ivar(coupled("h")),
     _q_x_ivar(coupled("q_x")),
     _q_y_ivar(isCoupled("q_y") ? coupled("q_y") : 0),
-    _comp(getParam<unsigned int>("component"))
+    _comp(getParam<MooseEnum>("component"))
 {
-  // Sanity checks on component
-  if (_comp > 1)
-    mooseError("component in SVAdvection can only take values 0 or 1");
-  if (_comp == 2 && _mesh.dimension() != 2)
-    mooseError("component in SVAdvection is 2 but the mesh is 1D");
+  // Sanity check on component
+  if (_comp == 1 && _mesh.dimension() != 2)
+    mooseError("Component in SVAdvection is y but the mesh is 1D");
 
   // y-component of momentum is required but not given
   if (_mesh.dimension() == 2 && !isCoupled("q_y"))

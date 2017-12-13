@@ -73,17 +73,17 @@
   [./q_x_advection]
     type = SVAdvection
     variable = q_x
+    component = x
     h = h
     q_x = q_x
     q_y = q_y
-    component = 0
   [../]
 
   [./q_x_pressure]
     type = SVPressure
     variable = q_x
+    component = x
     h = h
-    component = 0
   [../]
 
   [./q_x_artificial_viscosity]
@@ -99,17 +99,17 @@
   [./q_y_advection]
     type = SVAdvection
     variable = q_y
+    component = y
     h = h
     q_x = q_x
     q_y = q_y
-    component = 1
   [../]
 
   [./q_y_pressure]
     type = SVPressure
     variable = q_y
+    component = y
     h = h
-    component = 1
   [../]
 
   [./q_y_artificial_viscosity]

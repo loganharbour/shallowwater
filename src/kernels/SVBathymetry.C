@@ -18,7 +18,11 @@ validParams<SVBathymetry>()
   params.addRequiredCoupledVar("b", "The aux variable that represents the bathymetry"
                                " data (describes the topography of the bottom"
                                "terrain of the fluid body)");
-  params.addRequiredParam<unsigned int>("component", "The component of b to evaluate (0,1)->(x,y).");
+
+  MooseEnum components("x=0 y=1");
+  params.addRequiredParam<MooseEnum>("component", components, "The component of"
+                                     " b to evaluate [x|y].");
+
   params.addParam<Real>("g", 9.80665, "Constant of gravity (m/s^2).");
 
   return params;
@@ -30,14 +34,12 @@ SVBathymetry::SVBathymetry(const InputParameters & parameters)
     _h_ivar(coupled("h")),
     // _grad_b(coupledGradient("b")),
     _grad_b(coupledValue("b")),
-    _comp(getParam<unsigned int>("component")),
+    _comp(getParam<MooseEnum>("component")),
     _g(getParam<Real>("g"))
 {
-  // Sanity checks on component
-  if (_comp > 1)
-    mooseError("component in SVBathymetry can only take values 0 or 1");
+  // Sanity check on component
   if (_comp == 1 && _mesh.dimension() != 2)
-    mooseError("component in SVBathymetry is 2 but the mesh is 1D");
+    mooseError("Component in SVBathymetry is y but the mesh is 1D");
 
   // Sanity check on gravity
   if (_g < 0)
