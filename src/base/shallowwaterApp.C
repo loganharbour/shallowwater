@@ -5,8 +5,6 @@
 #include "MooseSyntax.h"
 
 // Saint-Venant auxkernels
-#include "SVEntropyAux.h"
-#include "SVEntropyFluxAux.h"
 #include "SVPressureAux.h"
 #include "SVVelocityAux.h"
 
@@ -71,8 +69,6 @@ void
 shallowwaterApp::registerObjects(Factory & factory)
 {
   // Saint-Venant auxkernels
-  registerKernel(SVEntropyAux);
-  registerKernel(SVEntropyFluxAux);
   registerKernel(SVPressureAux);
   registerKernel(SVVelocityAux);
 

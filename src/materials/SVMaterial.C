@@ -10,10 +10,9 @@ validParams<SVMaterial>()
   InputParameters params = validParams<Material>();
 
   // Viscosity type
-  MooseEnum viscosity_types("NONE=0 FIRST_ORDER=1 ENTROPY=2");
+  MooseEnum viscosity_types("NONE=0 FIRST_ORDER=1");
   params.addRequiredParam<MooseEnum>("viscosity_type", viscosity_types, "The "
-                                     "viscosity type to use: [NONE|FIRST_ORDER"
-                                     "|ENTROPY]");
+                                     "viscosity type to use: [NONE|FIRST_ORDER]");
 
   // Coupled variables
   params.addRequiredCoupledVar("h", "The water height variable.");
@@ -22,28 +21,8 @@ validParams<SVMaterial>()
   params.addCoupledVar("q_y", "The variable that expresses the y-component of "
                        "the momentum (required only in 2D).");
 
-  // Coupled bathymetry aux variable
-  params.addCoupledVar("b", "The aux variable that represents the bathymetry"
-                            " data (describes the topography of the bottom"
-                            "terrain of the fluid body).");
-
-  // Coupled entropy aux variables
-  params.addCoupledVar("entropy", "The aux variable that expresses the entropy"
-                       " (required for viscosity_type = ENTROPY).");
-  params.addCoupledVar("F", "The aux variable that expresses the x-component of "
-                       "the entropy flux (required for viscosity_type = ENTROPY).");
-  params.addCoupledVar("G", "The aux variable that expresses the Y-component of "
-                       "the entropy flux (required in 2D for viscosity_type = ENTROPY).");
-
-  // Coupled jump aux variable
-  params.addCoupledVar("jump_entropy_flux", "The aux variable that expresses the"
-                       " jump of the entropy flux (required for viscosity type ="
-                       " ENTROPY).");
-
   // Constants
   params.addParam<Real>("g", 9.80665, "Constant of gravity (m/s^2).");
-  params.addParam<Real>("C_entropy", 1.0, "The coefficient for entropy viscosity.");
-  params.addParam<Real>("C_jump", 1.0, "The coefficient for jumps.");
   params.addParam<Real>("C_max", 0.5, "The coefficient for first-order viscosity.");
 
   return params;
@@ -62,32 +41,13 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
     _q_x(coupledValue("q_x")),
     _q_y(isCoupled("q_y") ? coupledValue("q_y") : _zero),
 
-    // Coupled bathymetry aux variable
-    _b(isCoupled("b") ? coupledValue("b") : _zero),
-
-    // Coupled entropy aux variables
-    _E(isCoupled("entropy") ? coupledValue("entropy") : _zero),
-    _E_old(isCoupled("entropy") ? coupledValueOld("entropy") : _zero),
-    _E_older(isCoupled("entropy") ? coupledValueOlder("entropy") : _zero),
-    _grad_F(isCoupled("F") ? coupledGradient("F") : _grad_zero),
-    _grad_G(isCoupled("G") ? coupledGradient("G") : _grad_zero),
-
-    // Coupled jump aux variable
-    _jump(isCoupled("jump_entropy_flux") ? coupledValue("jump_entropy_flux") : _zero),
-
     // Constants
     _g(getParam<Real>("g")),
-    _C_entropy(getParam<Real>("C_entropy")),
-    _C_jump(getParam<Real>("C_jump")),
     _C_max(getParam<Real>("C_max")),
 
     // Declare material properties
     _kappa(declareProperty<Real>("kappa")),
-    _kappa_max(declareProperty<Real>("kappa_max")),
-    _residual(declareProperty<Real>("residual")),
-
-    // Epsilon value normalization of unit vectors
-    _eps(std::sqrt(std::numeric_limits<Real>::min()))
+    _kappa_max(declareProperty<Real>("kappa_max"))
 {
   // y-component of momentum is required but not given
   if (_mesh_dimension == 2 && !isCoupled("q_y"))
@@ -97,24 +57,6 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
   if (_mesh_dimension == 1 && isCoupled("q_y"))
     mooseError("SVMaterial does not require the y-component of momentum, q_y"
                " in 1D but it was given");
-
-  // Missing entropy variables or entropy variables given that are not needed
-  // with viscosity_type = ENTROPY
-  if (_viscosity_type == 2)
-  {
-    if (!isCoupled("entropy"))
-      mooseError("SVMaterial requires the entropy variable, entropy, for "
-                 "viscosity_type = ENTROPY");
-    if (!isCoupled("F"))
-      mooseError("SVMaterial requires the x-component of the entropy flux, F "
-                 "for viscosity_type = ENTROPY");
-    if (_mesh_dimension == 2 && !isCoupled("G"))
-      mooseError("SVMaterial requires the y-component of the entropy flux, G "
-                 "for viscosity_type = ENTROPY when in 2D");
-    if (_mesh_dimension == 1 && isCoupled("G"))
-      mooseError("SVMaterial does not require the y-component of the entropy "
-                 "flux, G, for viscosity_type = ENTROPY in 1D but it was given");
-  }
 
   // Sanity check on gravity
   if (_g < 0)
@@ -140,9 +82,6 @@ SVMaterial::computeQpProperties()
   // Sound speed
   Real c = std::sqrt(_g * _h[_qp]);
 
-  // First-order viscosity
-  _kappa_max[_qp] = _C_max * _h_cell * (v_q.norm() / _h[_qp] + c);
-
   switch (_viscosity_type)
   {
     // None
@@ -151,38 +90,8 @@ SVMaterial::computeQpProperties()
       break;
     // First order
     case 1:
+      _kappa_max[_qp] = _C_max * _h_cell * (v_q.norm() / _h[_qp] + c);
       _kappa[_qp] = _kappa_max[_qp];
-      break;
-    // Entropy method
-    case 2:
-      // At first time step
-      if (_t_step == 1)
-        _kappa[_qp] = _kappa_max[_qp];
-      // At later time steps
-      else
-      {
-        // Weights for BDF2
-        Real sum = _dt + _dt_old;
-        Real w0 = (2.0 * _dt + _dt_old) / (_dt * sum);
-        Real w1 = -sum / (_dt * _dt_old);
-        Real w2 = _dt / (_dt_old * sum);
-
-        // Absolute value of the entropy residual
-        _residual[_qp] = w0 * _E[_qp] + w1 * _E_old[_qp] + w2 * _E_older[_qp];
-        _residual[_qp] += _grad_F[_qp](0) + _grad_G[_qp](1);
-        _residual[_qp] = std::fabs(_residual[_qp]);
-
-        // Normalization is c^2
-        Real norm = _g * ( std::fabs(_h[_qp]) + _b[_qp] + _eps);
-
-        // Entropy viscosity
-        Real kappa_e = _C_entropy * _residual[_qp] + _C_jump * _jump[_qp];
-        kappa_e *= _h_cell * _h_cell / norm;
-        mooseAssert(kappa_e < 0, "Entropy viscosity < 0 in" << this->name());
-
-        // Compute and store kappa
-        _kappa[_qp] = std::min(_kappa_max[_qp], kappa_e);
-      }
       break;
   }
 }
