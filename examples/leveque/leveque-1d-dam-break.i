@@ -20,12 +20,13 @@
 
 [GlobalParams]
   g = 1.0
+  implicit = false
 []
 
 [Mesh]
   type = GeneratedMesh
   dim = 1
-  nx = 100
+  nx = 5000
   xmin = -5
   xmax = 5
 []
@@ -65,30 +66,29 @@
 [Kernels]
   [./h_time_derivative]
     type = TimeDerivative
+    implicit = true
     variable = h
   [../]
 
   [./h_continuity]
     type = SVContinuity
-    implicit = false
     variable = h
     q_x = q
   [../]
 
   [./h_artificial_viscosity]
     type = SVArtificialViscosity
-    implicit = false
     variable = h
   [../]
 
   [./q_time_derivative]
     type = TimeDerivative
+    implicit = true
     variable = q
   [../]
 
   [./q_advection]
     type = SVAdvection
-    implicit = false
     variable = q
     h = h
     q_x = q
@@ -97,7 +97,6 @@
 
   [./q_pressure]
     type = SVPressure
-    implicit = false
     variable = q
     h = h
     component = x
@@ -105,7 +104,6 @@
 
   [./q_artificial_viscosity]
     type = SVArtificialViscosity
-    implicit = false
     variable = q
   [../]
 []
@@ -144,13 +142,28 @@
   [../]
 []
 
+[Postprocessors]
+  [./dt]
+    type = TimeStepCFL
+    h = h
+    q_x = q
+    cfl = 0.25
+  [../]
+[]
+
 [Executioner]
   type = Transient
 
+  solve_type = LINEAR
   scheme = explicit-euler
-
+  l_tol = 1e-12
   end_time = 2
-  dt = 1e-3
+
+  [./TimeStepper]
+    type = PostprocessorDT
+    postprocessor = dt
+    dt = 1e-6
+  [../]
 []
 
 [Outputs]
