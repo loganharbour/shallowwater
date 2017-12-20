@@ -129,18 +129,30 @@
 []
 
 [BCs]
-  [./BC_qx]
-    type = DirichletBC
-    variable = q_x
+  [./BC_h]
+    type = SolidWallBC
+    variable = h
+    equation = CONTINUITY
+    h = h
     boundary = 'top left bottom right'
-    value = 0
+  [../]
+
+  [./BC_qx]
+    type = SolidWallBC
+    variable = q_x
+    equation = MOMENTUM
+    component = x
+    h = h
+    boundary = 'top left bottom right'
   [../]
 
   [./BC_qy]
-    type = DirichletBC
+    type = SolidWallBC
     variable = q_y
+    equation = MOMENTUM
+    component = y
+    h = h
     boundary = 'top left bottom right'
-    value = 0
   [../]
 []
 
@@ -150,7 +162,7 @@
     h = h
     q_x = q_x
     q_y = q_y
-    cfl = 0.05
+    cfl = 0.25
   [../]
 []
 
