@@ -18,6 +18,9 @@
 // Saint-Venant material
 #include "SVMaterial.h"
 
+// Boundary conditions
+#include "SolidWallBC.h"
+
 // Postprocessors
 #include "TimeStepCFL.h"
 
@@ -82,6 +85,9 @@ shallowwaterApp::registerObjects(Factory & factory)
   // Saint-Venant material
   registerMaterial(SVMaterial);
 
+  // Boundary conditions
+  registerBoundaryCondition(SolidWallBC);
+  
   // Postprocessors
   registerPostprocessor(TimeStepCFL);
 }
