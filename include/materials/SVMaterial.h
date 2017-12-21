@@ -33,7 +33,11 @@ protected:
   const Real _g;
 
   /// Viscosity approximation coefficients
-  const Real _C_max;
+  const Real _C_max_0;
+  Real _C_max = 0;
+
+  /// Time to add extra artificial visocsity
+  const Real _extra_duration;
 
   /// Delcared material properties
   MaterialProperty<Real> & _kappa;

@@ -24,6 +24,9 @@ validParams<SVMaterial>()
   // Constants
   params.addParam<Real>("g", 9.80665, "Constant of gravity (m/s^2).");
   params.addParam<Real>("C_max", 0.5, "The coefficient for first-order viscosity.");
+  params.addParam<Real>("extra_duration", std::numeric_limits<Real>::min(),
+                        "The amount of time at the beginning of the transient to"
+                        "apply additional artificial viscosity.");
 
   return params;
 }
@@ -43,7 +46,8 @@ SVMaterial::SVMaterial(const InputParameters & parameters)
 
     // Constants
     _g(getParam<Real>("g")),
-    _C_max(getParam<Real>("C_max")),
+    _C_max_0(getParam<Real>("C_max")),
+    _extra_duration(getParam<Real>("extra_duration")),
 
     // Declare material properties
     _kappa(declareProperty<Real>("kappa")),
@@ -68,6 +72,12 @@ SVMaterial::computeProperties()
 {
   // Characteristic length: no need to call this at every quadrature point
   _h_cell = std::pow(_current_elem->volume(), 1 / _mesh_dimension);
+
+  // Add additional viscosity if necessary
+  if (_t < _extra_duration)
+    _C_max = _C_max_0 * 10 * (_extra_duration - _t) / _extra_duration;
+  else
+    _C_max = _C_max_0;
 
   // This exectues SVMaterial::computeQpProperties as necessary
   Material::computeProperties();
