@@ -19,6 +19,7 @@
 #include "SVMaterial.h"
 
 // Boundary conditions
+#include "ImposedDischargeBC.h"
 #include "SolidWallBC.h"
 
 // Postprocessors
@@ -86,8 +87,9 @@ shallowwaterApp::registerObjects(Factory & factory)
   registerMaterial(SVMaterial);
 
   // Boundary conditions
+  registerBoundaryCondition(ImposedDischargeBC);
   registerBoundaryCondition(SolidWallBC);
-  
+
   // Postprocessors
   registerPostprocessor(TimeStepCFL);
 }
