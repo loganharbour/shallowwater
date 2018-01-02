@@ -38,8 +38,6 @@ protected:
   /// Parameters for Newton iteration
   const unsigned int _newton_max;
   const Real _newton_abs_tol;
-
-  const Real _eps;
 };
 
 #endif // IMPOSEDDISCHARGEBC_H

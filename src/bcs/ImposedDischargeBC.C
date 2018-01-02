@@ -54,12 +54,11 @@ ImposedDischargeBC::ImposedDischargeBC(const InputParameters & parameters)
     _h(coupledValue("h")),
     _eq(getParam<MooseEnum>("equation")),
     _comp(isParamValid("component") ? getParam<MooseEnum>("component") : 0),
-    _h_imposed(getParam<Real>("h_imposed")),
-    _q_imposed(getParam<Real>("q_imposed")),
+    _h_imp(getParam<Real>("h_imposed")),
+    _q_imp(getParam<Real>("q_imposed")),
     _g(getParam<Real>("g")),
     _newton_max(getParam<unsigned int>("newton_max")),
     _newton_abs_tol(getParam<Real>("newton_abs_tol")),
-    _eps(getParam<Real>("epsilon"))
 {
   // Do we have a component for the momentum equations
   if (_eq == 1 && !isParamValid("component"))
@@ -96,12 +95,12 @@ ImposedDischargeBC::computeQpResidual()
 {
   // Continuity equation
   if (_eq == 0)
-    return - _q_imposed * _test[_i][_qp];
+    return - _q_imp * _test[_i][_qp];
   // Momentum equation: x or y-component
   else
   {
     // Height (to be computed) at boundary
-    Real h_bd;
+    Real h;
 
     // Sound speed inside domain
     Real c = std::sqrt(_g * _h[_qp]);
@@ -116,42 +115,45 @@ ImposedDischargeBC::computeQpResidual()
     if (v_n + c > 0 && v_n < c)
     {
       // Initial guess for h at boundary
-      h_bd = 2 * std::pow(_q_imposed / std::sqrt(_g), 2. / 3) + 1;
-      Real h_bd_last;
+      h = 2 * std::pow(_q_imp / std::sqrt(_g), 2. / 3) + 1;
+      Real h_last;
 
       // Solve for the zero
       for (unsigned int i = 0; i <= _newton_max; ++i)
       {
-        h_bd_last = h_bd;
+        h_last = h;
 
-        Real f = 2 * std::sqrt(_g * h_bd) * h_bd - _q_imposed - (v_n + 2 * c) * h_bd;
-        Real fp = 3 * std::sqrt(_g * h_bd) - v_n - 2 * c;
-        h_bd = h_bd - f / fp;
+        Real f = 2 * std::sqrt(_g * h) * h - _q_imp - (v_n + 2 * c) * h;
+        Real fp = 3 * std::sqrt(_g * h) - v_n - 2 * c;
+        h = h - f / fp;
 
-        Real residual = std::abs(h_bd_last - h_bd);
+        Real residual = std::abs(h_last - h);
         if (residual < _newton_abs_tol)
           break;
 
         if (i == _newton_max)
-          mooseWarning("h_bd not found after ", i, " iterations (residual = ",
+          mooseWarning("h not found after ", i, " iterations (residual = ",
                        residual, ") in ImposedDischargeBC");
       }
 
+      // If h is small, let it be stagnant
+      if (h_bd < 1e-12)
+        return 0;
     }
     // Torrential flow, all characteristics leave, v_n + c > 0, v_n > 0
     else if (v_n + c > 0 && v_n > c)
     {
       // Use h from inside domain
-      h_bd = _h[_qp];
+      h = _h[_qp];
     }
     // Torrential flow, all characteristics enter, v_n + c < 0
     else
     {
       // Use user defined h
-      h_bd = _h_imposed;
+      h = _h_imp;
     }
 
     // Solve, now that h is known
-    return _q_imposed * (_q_imposed * _normals[_qp](_comp) / h_bd + _g * h_bd * h_bd * _normals[_qp](_comp)) * _test[_i][_qp];
+    return _q_imp * (_q_imp * _normals[_qp](_comp) / h + _g * h * h * _normals[_qp](_comp)) * _test[_i][_qp];
   }
 }
