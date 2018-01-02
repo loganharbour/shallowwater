@@ -9,8 +9,8 @@ validParams<ImposedDischargeBC>()
 {
   InputParameters params = validParams<IntegratedBC>();
 
-  params.addClassDescription("The wall boundary condition in which the normal "
-                             "velocity is assumed to be zero.");
+  params.addClassDescription("The boundary condition in which a discharge normal "
+                             "to the boundary is enforced.");
 
   params.addCoupledVar("q_x", "The variable that expresses the x-component"
                        " of the momentum (required for equation = MOMENTUM).");
@@ -33,11 +33,15 @@ validParams<ImposedDischargeBC>()
   params.addRequiredParam<Real>("q_imposed", "The imposed discharge where "
                                 "q_imposed = ||q|| = |q * n| <= 0 (assuming"
                                 " that the imposed discharge is always inwards).");
-                                
+
   params.addParam<Real>("g", 9.80665, "The gravity constant (m/s^2).");
-  params.addParam<unsigned int>("newton_max", 10, "change");
-  params.addParam<Real>("newton_abs_tol", 1e-12, "change");
-  params.addParam<Real>("epsilon", 1e-12, "change");
+  params.addParam<unsigned int>("newton_max", 10, "The max number of Newton "
+                                "iterations allowed in computing the zero for "
+                                "the fluvial flow case");
+  params.addParam<Real>("newton_abs_tol", 1e-12, "The absolute tolerance used in "
+                        "converging the Newton iteration for computing the zero "
+                        "for the fluvial flow case");
+  params.addParam<Real>("epsilon", 1e-12, "to implement");
 
   return params;
 }
