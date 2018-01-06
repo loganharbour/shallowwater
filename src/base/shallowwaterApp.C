@@ -20,6 +20,7 @@
 
 // Boundary conditions
 #include "ImposedDischargeBC.h"
+#include "ImposedHeightBC.h"
 #include "SolidWallBC.h"
 
 // Postprocessors
@@ -88,6 +89,7 @@ shallowwaterApp::registerObjects(Factory & factory)
 
   // Boundary conditions
   registerBoundaryCondition(ImposedDischargeBC);
+  registerBoundaryCondition(ImposedHeightBC);
   registerBoundaryCondition(SolidWallBC);
 
   // Postprocessors
