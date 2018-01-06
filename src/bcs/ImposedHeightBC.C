@@ -26,12 +26,10 @@ validParams<ImposedHeightBC>()
                              "that the BC is applied to (only for equation = "
                              "MOMENTUM) [x|y].");
 
-  params.addRequiredParam<Real>("h_imposed", "The imposed height which is used in"
+  params.addRequiredParam<Real>("h_imposed", "The imposed height.");
+  params.addRequiredParam<Real>("q_imposed", "The imposed discharge which is used in"
                                 " torrential flow when v * n < -c, in which"
                                 "all the characteristics enter the domain.");
-  params.addRequiredParam<Real>("q_imposed", "The imposed discharge where "
-                                "q_imposed = ||q|| = |q * n| <= 0 (assuming"
-                                " that the imposed discharge is always inwards).");
 
   params.addParam<Real>("g", 9.80665, "The gravity constant (m/s^2).");
 
