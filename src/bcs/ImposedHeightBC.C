@@ -52,16 +52,16 @@ ImposedHeightBC::ImposedHeightBC(const InputParameters & parameters)
 {
   // Do we have a component for the momentum equations
   if (_eq == 1 && !isParamValid("component"))
-    mooseError("Component is required in ImposedHeightBC for equation = ",
+    mooseError("component is required in ImposedHeightBC for equation = ",
                "MOMENTUM");
 
   // Sanity check on component
   if (_comp == 1 && _mesh.dimension() != 2)
-    mooseError("Component in ImposedHeightBC is y but the mesh is 1D");
+    mooseError("component in ImposedHeightBC is y but the mesh is 1D");
 
-  // y-component of momentum is required but not given (for momentum eq)
+  // y-component of momentum is required but not given
   if (_mesh.dimension() == 2 && !isCoupled("q_y"))
-    mooseError("ImposedHeightBC requires the y-component of momentum, q_y");
+    mooseError("ImposedHeightBC requires the y-component of momentum, q_y, in 2D");
 
   // y-component of momentum is given but is not required
   if (_mesh.dimension() == 1 && isCoupled("q_y"))
