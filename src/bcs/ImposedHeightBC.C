@@ -23,7 +23,7 @@ validParams<ImposedHeightBC>()
 
   MooseEnum components("x=0 y=1");
   params.addParam<MooseEnum>("component", components, "The component of momentum "
-                             "that the BC is applied to (only for equation = "
+                             "that the BC is applied to (required for equation = "
                              "MOMENTUM) [x|y].");
 
   params.addRequiredParam<Real>("h_imposed", "The imposed height.");
