@@ -15,8 +15,10 @@ validParams<ImposedDischargeBC>()
   params.addCoupledVar("q_x", "The variable that expresses the x-component"
                        " of the momentum (required for equation = MOMENTUM).");
   params.addCoupledVar("q_y", "The variable that expresses the y-component of "
-                       "the momentum (required only in 2D).");
-  params.addCoupledVar("h", "The water height variable.");
+                       "the momentum (required only in 2D with equation = "
+                       "MOMENTUM).");
+  params.addCoupledVar("h", "The water height variable (required for equation ="
+                       "MOMENTUM).");
 
   MooseEnum equations("CONTINUITY=0 MOMENTUM=1");
   params.addRequiredParam<MooseEnum>("equation", equations, "The equation type the"

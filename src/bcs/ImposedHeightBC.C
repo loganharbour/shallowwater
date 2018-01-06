@@ -12,7 +12,7 @@ validParams<ImposedHeightBC>()
   params.addClassDescription("The boundary condition in which a height is imposed.");
 
   params.addRequiredCoupledVar("q_x", "The variable that expresses the x-component"
-                       " of the momentum (required for equation = MOMENTUM).");
+                       " of the momentum.");
   params.addCoupledVar("q_y", "The variable that expresses the y-component of "
                        "the momentum (required only in 2D).");
   params.addRequiredCoupledVar("h", "The water height variable.");
