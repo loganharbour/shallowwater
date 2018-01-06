@@ -136,7 +136,8 @@ ImposedDischargeBC::computeQpResidual()
                        residual, ") in ImposedDischargeBC");
       }
 
-      // If h is small, let it be stagnant
+      // If h is small, let it be stagnant. This is not how it is in the note,
+      // changing it would require storing a separate q_x and q_y
       if (h_bd < 1e-12)
         return 0;
     }
