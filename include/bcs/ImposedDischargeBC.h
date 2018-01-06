@@ -29,8 +29,8 @@ protected:
   const unsigned int _comp;
 
   /// Imposed values
-  const Real _h_imposed;
-  const Real _q_imposed;
+  const Real _h_imp;
+  const Real _q_imp;
 
   /// Gravity constant
   const Real _g;

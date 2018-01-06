@@ -41,7 +41,6 @@ validParams<ImposedDischargeBC>()
   params.addParam<Real>("newton_abs_tol", 1e-12, "The absolute tolerance used in "
                         "converging the Newton iteration for computing the zero "
                         "for the fluvial flow case");
-  params.addParam<Real>("epsilon", 1e-12, "to implement");
 
   return params;
 }
@@ -58,16 +57,16 @@ ImposedDischargeBC::ImposedDischargeBC(const InputParameters & parameters)
     _q_imp(getParam<Real>("q_imposed")),
     _g(getParam<Real>("g")),
     _newton_max(getParam<unsigned int>("newton_max")),
-    _newton_abs_tol(getParam<Real>("newton_abs_tol")),
+    _newton_abs_tol(getParam<Real>("newton_abs_tol"))
 {
   // Do we have a component for the momentum equations
   if (_eq == 1 && !isParamValid("component"))
-    mooseError("Component is required in ImposedDischargeBC for equation = ",
+    mooseError("component is required in ImposedDischargeBC for equation = ",
                "MOMENTUM");
 
   // Sanity check on component
   if (_comp == 1 && _mesh.dimension() != 2)
-    mooseError("Component in ImposedDischargeBC is y but the mesh is 1D");
+    mooseError("component in ImposedDischargeBC is y but the mesh is 1D");
 
   // x-component of momentum is required for momentum eq
   if (_eq == 1 && !isCoupled("q_x"))
@@ -77,7 +76,7 @@ ImposedDischargeBC::ImposedDischargeBC(const InputParameters & parameters)
   // y-component of momentum is required but not given (for momentum eq)
   if (_mesh.dimension() == 2 && !isCoupled("q_y") && _eq == 1)
     mooseError("ImposedDischargeBC requires the y-component of momentum, q_y, ",
-               "for the momentum equation");
+               "for the momentum equation, in 2D");
 
   // y-component of momentum is given but is not required
   if (_mesh.dimension() == 1 && isCoupled("q_y"))
@@ -99,20 +98,22 @@ ImposedDischargeBC::computeQpResidual()
   // Momentum equation: x or y-component
   else
   {
-    // Height (to be computed) at boundary
-    Real h;
-
     // Sound speed inside domain
-    Real c = std::sqrt(_g * _h[_qp]);
+    Real c_in = std::sqrt(_g * _h[_qp]);
 
     // Velocity vector inside domain
-    RealVectorValue v(_q_x[_qp] / _h[_qp], _q_y[_qp] / _h[_qp], 0);
+    RealVectorValue v_in(_q_x[_qp] / _h[_qp], _q_y[_qp] / _h[_qp], 0);
 
-    // Normal component of velocity inside domain
-    Real v_n = v * _normals[_qp];
+    // Normal magnitude of velocity inside domain
+    Real nu_n_in = v_in * _normals[_qp];
 
-    // Fluvial flow, |v_n < c|, v_n + c > 0, v_n < c
-    if (v_n + c > 0 && v_n < c)
+    // Variable values at the boundary that we are solving for
+    Real h;
+    Real q_x = -_q_imp * _normals[_qp](0); // Assume we are using user input
+    Real q_y = -_q_imp * _normals[_qp](1); // Assume we are using user input
+
+    // Fluvial flow, |nu_n_in < c_in|, nu_n_in + c_in > 0, nu_n_in < c_in
+    if (nu_n_in + c_in > 0 && nu_n_in < c_in)
     {
       // Initial guess for h at boundary
       h = 2 * std::pow(_q_imp / std::sqrt(_g), 2. / 3) + 1;
@@ -123,8 +124,8 @@ ImposedDischargeBC::computeQpResidual()
       {
         h_last = h;
 
-        Real f = 2 * std::sqrt(_g * h) * h - _q_imp - (v_n + 2 * c) * h;
-        Real fp = 3 * std::sqrt(_g * h) - v_n - 2 * c;
+        Real f = 2 * std::sqrt(_g * h) * h - _q_imp - (nu_n_in + 2 * c_in) * h;
+        Real fp = 3 * std::sqrt(_g * h) - nu_n_in - 2 * c_in;
         h = h - f / fp;
 
         Real residual = std::abs(h_last - h);
@@ -136,25 +137,38 @@ ImposedDischargeBC::computeQpResidual()
                        residual, ") in ImposedDischargeBC");
       }
 
-      // If h is small, let it be stagnant. This is not how it is in the note,
-      // changing it would require storing a separate q_x and q_y
-      if (h_bd < 1e-12)
-        return 0;
+      // If h is small, let it be stagnant
+      if (h < 1e-12)
+      {
+        h = 1e-12;
+        q_x = 0;
+        q_y = 0;
+      }
     }
-    // Torrential flow, all characteristics leave, v_n + c > 0, v_n > 0
-    else if (v_n + c > 0 && v_n > c)
+    // Torrential flow, all characteristics leave, nu_n_in + c_in > 0, nu_n_in > 0
+    else if (nu_n_in + c_in > 0 && nu_n_in > c_in)
     {
-      // Use h from inside domain
+      // All enter: information comes from inside the domain
       h = _h[_qp];
+      q_x = _q_x[_qp];
+      q_y = _q_y[_qp];
     }
-    // Torrential flow, all characteristics enter, v_n + c < 0
+    // Torrential flow, all characteristics enter, nu_n_in + c_in < 0
     else
     {
-      // Use user defined h
+      // All exit: information comes from outside the domain (user input)
+      // Note that q_x and q_y have already been set assuming this
       h = _h_imp;
     }
 
-    // Solve, now that h is known
-    return _q_imp * (_q_imp * _normals[_qp](_comp) / h + _g * h * h * _normals[_qp](_comp)) * _test[_i][_qp];
+    // Pressure term
+    Real pressure = _g * h * h * _normals[_qp](_comp) / 2;
+
+    // x-momentum equation
+    if (_comp == 0)
+      return -_q_imp * (q_x / h + pressure) * _test[_i][_qp];
+    // y-momentum equation
+    else
+      return -_q_imp * (q_y / h + pressure) * _test[_i][_qp];
   }
 }
