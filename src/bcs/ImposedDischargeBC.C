@@ -48,9 +48,9 @@ validParams<ImposedDischargeBC>()
 
 ImposedDischargeBC::ImposedDischargeBC(const InputParameters & parameters)
   : IntegratedBC(parameters),
-    _q_x(coupledValue("q_x")),
+    _q_x(isCoupled("q_x") ? coupledValue("q_x") : _zero),
     _q_y(isCoupled("q_y") ? coupledValue("q_y") : _zero),
-    _h(coupledValue("h")),
+    _h(isCoupled("h") ? coupledValue("h") : _zero),
     _eq(getParam<MooseEnum>("equation")),
     _comp(isParamValid("component") ? getParam<MooseEnum>("component") : 0),
     _h_imp(getParam<Real>("h_imposed")),
