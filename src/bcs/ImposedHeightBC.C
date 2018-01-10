@@ -84,8 +84,8 @@ ImposedHeightBC::computeQpResidual()
   Real q_x;
   Real q_y;
 
-  // Fluvial flow, |nu_n_in < c_in|, nu_n_in + c_in > 0, nu_n_in < c_in
-  if (nu_n_in + c_in > 0 && nu_n_in < c_in)
+  // Fluvial flow, |nu_n_in| < c_in
+  if (std::abs(nu_n_in) < c_in)
   {
     // Normal component of velocity outside the domain
     Real nu_n = nu_n_in + 2 * (c_in - std::sqrt(_g * _h_imp));
@@ -103,15 +103,15 @@ ImposedHeightBC::computeQpResidual()
     // Height is imposed
     h = _h_imp;
   }
-  // Torrential flow, all characteristics leave, nu_n_in + c_in > 0, nu_n_in > 0
-  else if (nu_n_in + c_in > 0 && nu_n_in > c_in)
+  // Torrential flow, all characteristics leave, nu_n_in > c_in,
+  else if (nu_n_in > c_in)
   {
     // All leave: information comes from inside the domain
     q_x = _q_x[_qp];
     q_y = _q_y[_qp];
     h = _h[_qp];
   }
-  // Torrential flow, all characteristics enter, nu_n_in + c_in < 0
+  // Torrential flow, all characteristics enter, nu_n_in < -c_in
   else
   {
     // All enter: information comes from outside the domain (user input)

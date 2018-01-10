@@ -114,8 +114,8 @@ ImposedDischargeBC::computeQpResidual()
     Real q_x = -_q_imp * _normals[_qp](0); // Assume we are using user input
     Real q_y = -_q_imp * _normals[_qp](1); // Assume we are using user input
 
-    // Fluvial flow, |nu_n_in < c_in|, nu_n_in + c_in > 0, nu_n_in < c_in
-    if (nu_n_in + c_in > 0 && nu_n_in < c_in)
+    // Fluvial flow, |nu_n_in| < c_in
+    if (std::abs(nu_n_in) < c_in)
     {
       // Initial guess for h at boundary
       h = 2 * std::pow(_q_imp / std::sqrt(_g), 2. / 3) + 1;
@@ -147,15 +147,15 @@ ImposedDischargeBC::computeQpResidual()
         q_y = 0;
       }
     }
-    // Torrential flow, all characteristics leave, nu_n_in + c_in > 0, nu_n_in > 0
-    else if (nu_n_in + c_in > 0 && nu_n_in > c_in)
+    // Torrential flow, all characteristics leave, nu_n_in > c_in,
+    else if (nu_n_in > c_in)
     {
       // All enter: information comes from inside the domain
       h = _h[_qp];
       q_x = _q_x[_qp];
       q_y = _q_y[_qp];
     }
-    // Torrential flow, all characteristics enter, nu_n_in + c_in < 0
+    // Torrential flow, all characteristics enter, nu_n_in < -c_in
     else
     {
       // All exit: information comes from outside the domain (user input)
